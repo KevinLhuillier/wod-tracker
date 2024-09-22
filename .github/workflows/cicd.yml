@@ -18,8 +18,10 @@ jobs:
         include:
           - dockerfile: ./frontend/Dockerfile
             image: ghcr.io/kevinlhuillier/wod-tracker-front
+            context: ./frontend
           - dockerfile: ./backend/Dockerfile
             image: ghcr.io/kevinlhuillier/wod-tracker-back
+            context: ./backtend
     permissions:
       packages: write
 
@@ -49,7 +51,7 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          context: .
+          context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
