@@ -1,4 +1,4 @@
-package com.perso.wodapp.model;
+package com.perso.wodtracker.model;
 
 import jakarta.persistence.*;
 

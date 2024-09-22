@@ -1,7 +1,6 @@
-package com.perso.wodapp.model;
+package com.perso.wodtracker.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name="USERS", schema="public")

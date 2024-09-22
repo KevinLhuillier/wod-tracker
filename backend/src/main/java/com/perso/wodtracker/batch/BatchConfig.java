@@ -1,15 +1,12 @@
-package com.perso.wodapp.batch;
+package com.perso.wodtracker.batch;
 
-import com.perso.wodapp.model.WodType;
+import com.perso.wodtracker.model.WodType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -17,14 +14,13 @@ import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.PlatformTransactionManager;
-import com.perso.wodapp.model.Wod;
-import com.perso.wodapp.repository.WodRepository;
+import com.perso.wodtracker.model.Wod;
+import com.perso.wodtracker.repository.WodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.beans.PropertyEditorSupport;

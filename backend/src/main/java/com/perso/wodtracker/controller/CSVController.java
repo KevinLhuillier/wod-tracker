@@ -1,4 +1,4 @@
-package com.perso.wodapp.controller;
+package com.perso.wodtracker.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.CrossOrigin;

@@ -1,7 +1,7 @@
-package com.perso.wodapp.controller;
+package com.perso.wodtracker.controller;
 
-import com.perso.wodapp.model.User;
-import com.perso.wodapp.repository.UserRepository;
+import com.perso.wodtracker.model.User;
+import com.perso.wodtracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
