@@ -21,7 +21,7 @@ jobs:
             context: ./frontend
           - dockerfile: ./backend/Dockerfile
             image: ghcr.io/kevinlhuillier/wod-tracker-back
-            context: ./backtend
+            context: ./backend
     permissions:
       packages: write
 
