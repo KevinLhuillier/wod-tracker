@@ -3,6 +3,6 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 FROM openjdk:17.0.1-jdk-slim
-COPY --from=build /target/wodapp-0.0.1-SNAPSHOT.jar wodapp.jar
+COPY --from=build /target/wodtracker-0.0.1-SNAPSHOT.jar wodtracker.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "wodapp.jar"]
+ENTRYPOINT ["java", "-jar", "wodtracker.jar"]
