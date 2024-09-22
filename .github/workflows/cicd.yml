@@ -1,0 +1,75 @@
+name: CI/CD
+
+env:
+  SERVER_PRODUCTION_IP: "57.129.42.227"
+  SERVER_PRODUCTION_USER: "root"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./frontend/Dockerfile
+            image: ghcr.io/kevinlhuillier/wod-tracker-front
+          - dockerfile: ./backend/Dockerfile
+            image: ghcr.io/kevinlhuillier/wod-tracker-back
+    permissions:
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Mise en place de Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login sur GitHub Package Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Récupération des métadonnées
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ matrix.image }}
+
+      - name: Build et push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          context: .
+          file: ${{ matrix.dockerfile }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: http://$SERVER_PRODUCTION_IP
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Déployer sur le serveur de production
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add - <<< "${{ secrets.VPS_KEY }}"
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ env.SERVER_PRODUCTION_IP}} >> ~/.ssh/known_hosts
+          scp docker-compose.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}}:/root/docker-compose.yml
+          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}"
+          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}} "docker compose -f /root/docker-compose.yml up -d --force-recreate"

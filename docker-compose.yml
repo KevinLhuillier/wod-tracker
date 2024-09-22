@@ -1,0 +1,34 @@
+services:
+  frontend:
+    image: ghcr.io/kevinlhuillier/wod-tracker-front:latest
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://57.129.42.227:8080/api
+
+  server:
+    image: ghcr.io/kevinlhuillier/wod-tracker-back:latest
+    ports:
+      - "8080:8080"
+    pull_policy: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/wodapp
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: wodapp
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  db_data:
