@@ -1,13 +1,13 @@
 services:
   frontend:
-    image: ghcr.io/kevinlhuillier/wod-tracker-front:latest
+    image: ghcr.io/kevinlhuillier/wod-tracker-front:main
     ports:
       - "3000:80"
     environment:
       - VITE_API_URL=http://57.129.42.227:8080/api
 
   server:
-    image: ghcr.io/kevinlhuillier/wod-tracker-back:latest
+    image: ghcr.io/kevinlhuillier/wod-tracker-back:main
     ports:
       - "8080:8080"
     pull_policy: always
