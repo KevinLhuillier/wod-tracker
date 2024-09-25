@@ -1,0 +1,29 @@
+name: Deploy EC2
+
+env:
+  SERVER_PRODUCTION_IP: "ec2-44-202-183-38.compute-1.amazonaws.com"
+  SERVER_PRODUCTION_USER: "ubuntu"
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: http://$SERVER_PRODUCTION_IP
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Déployer sur le serveur de production
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add - <<< "${{ secrets.EC2_KEY }}"
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ env.SERVER_PRODUCTION_IP}} >> ~/.ssh/known_hosts
+          scp docker-compose.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}}:/ubuntu/docker-compose.yml
+          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}"
+          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}} "docker compose -f /ubuntu/docker-compose.yml up -d --force-recreate"
