@@ -14,7 +14,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/wodapp
-      - SPRING_DATASOURCE_USERNAME=wodtrackeruser
+      - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=a!=sds{sdsd896Fzsd
       - SPRING_JPA_HIBERNATE_DDL_AUTO=none
     depends_on:
