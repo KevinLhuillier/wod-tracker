@@ -2,7 +2,7 @@ name: Deploy EC2
 
 env:
   SERVER_PRODUCTION_IP: "ec2-44-202-183-38.compute-1.amazonaws.com"
-  SERVER_PRODUCTION_USER: "ubuntu"
+  SERVER_PRODUCTION_USER: "root"
 
 on:
   workflow_dispatch:
@@ -24,6 +24,6 @@ jobs:
           ssh-add - <<< "${{ secrets.EC2_KEY }}"
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ env.SERVER_PRODUCTION_IP}} >> ~/.ssh/known_hosts
-          scp docker-compose.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}}:/home/ubuntu/docker-compose.yml
+          scp docker-compose.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}}:/root/docker-compose.yml
           ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}"
-          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}} "docker compose -f /home/ubuntu/docker-compose.yml up -d --force-recreate"
+          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}} "docker compose -f /root/docker-compose.yml up -d --force-recreate"
