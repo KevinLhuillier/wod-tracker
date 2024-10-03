@@ -7,16 +7,16 @@ const Menu = () => {
         <i className="fas fa-chart-line"></i> Wod Tracker
       </div>
       <ul className="mt-6">
-        <li className="mb-4">
+        <li>
           <Link
             to={`/`}
             className="flex items-center text-white p-3 hover:bg-gray-700 rounded-md transition-all duration-300 ease-in-out"
           >
             <i className="fas fa-home w-6"></i>
-            <span className="ml-2">Home</span>
+            <span className="ml-2">Dashboard</span>
           </Link>
         </li>
-        <li className="mb-4">
+        <li>
           <Link
             to={`/wods`}
             className="flex items-center text-white p-3 hover:bg-gray-700 rounded-md transition-all duration-300 ease-in-out"
@@ -25,7 +25,7 @@ const Menu = () => {
             <span className="ml-2">WODs</span>
           </Link>
         </li>
-        <li className="mb-4">
+        <li>
           <a
             href="#"
             className="flex items-center text-white p-3 hover:bg-gray-700 rounded-md transition-all duration-300 ease-in-out"
@@ -34,7 +34,7 @@ const Menu = () => {
             <span className="ml-2">Goals</span>
           </a>
         </li>
-        <li className="mb-4">
+        <li>
           <a
             href="#"
             className="flex items-center text-white p-3 hover:bg-gray-700 rounded-md transition-all duration-300 ease-in-out"
@@ -43,7 +43,7 @@ const Menu = () => {
             <span className="ml-2">Skills</span>
           </a>
         </li>
-        <li className="mb-4">
+        <li>
           <a
             href="#"
             className="flex items-center text-white p-3 hover:bg-gray-700 rounded-md transition-all duration-300 ease-in-out"

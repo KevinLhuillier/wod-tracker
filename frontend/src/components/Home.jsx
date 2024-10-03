@@ -1,10 +1,12 @@
 import Menu from "./Menu";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { fetchWods, deleteWod } from "../redux/wodSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const wods = useSelector((state) => state.wods.wods);
   const status = useSelector((state) => state.wods.status);
   const error = useSelector((state) => state.wods.error);
@@ -89,6 +91,12 @@ const Home = () => {
             ))}
           </ul>
         </div>
+        <button
+          className="absolute right-0 bottom-0 bg-black p-3 rounded-full mb-10 mr-8 text-white transition-transform transform duration-100  hover:bg-white hover:text-black hover:border-black hover:border-2"
+          onClick={() => navigate("/addWod")}
+        >
+          + WOD
+        </button>
       </div>
     </div>
   );
