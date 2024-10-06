@@ -32,15 +32,6 @@ public class WodController {
                 .collect(Collectors.toList());
     }
 
-//    @GetMapping
-//    public List<Wod> getAllWods() {
-//        return wodRepository.findAll();
-//    }
-//
-//    @GetMapping("/{id}")
-//    public Wod getWodById(@PathVariable Long id) {
-//        return wodRepository.findById(id).orElseThrow(() -> new RuntimeException("WOD not found"));
-//    }
 
     @PostMapping
     public ResponseEntity<Wod> createWod(@RequestBody WodDTO wodDTO) {

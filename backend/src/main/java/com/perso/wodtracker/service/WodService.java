@@ -44,7 +44,7 @@ public class WodService {
         wod.setFormat(wodDTO.getFormatWod());
         wod.setTimeCap(wodDTO.getTimeLimit());
         wod.setRounds(wodDTO.getRounds());
-
+        wod.setDate(wodDTO.getWorkoutDate());
 
         // Initialisation de la liste des compositions
         wod.setCompositions(new ArrayList<>()); // Important pour éviter les erreurs de nullité
@@ -80,6 +80,7 @@ public class WodService {
         wod.setFormat(wodDTO.getFormatWod());
         wod.setTimeCap(wodDTO.getTimeLimit());
         wod.setRounds(wodDTO.getRounds());
+        wod.setDate(wodDTO.getWorkoutDate());
 
         // 2. Gérer les compositions existantes
         Map<Short, Composition> existingCompositions = wod.getCompositions().stream()

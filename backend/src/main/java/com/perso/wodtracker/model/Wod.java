@@ -3,6 +3,7 @@ package com.perso.wodtracker.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -25,17 +26,14 @@ public class Wod {
     @Column(name = "rounds", nullable = false)
     private Short rounds;
 
+    @Column(name = "workout_date")
+    private LocalDate date;
+
     @OneToMany(mappedBy = "wod", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Composition> compositions;
 
     // Constructeur par défaut
     public Wod() {
-    }
-
-    public Wod(Long id, String type, String format) {
-        this.wodId = id;
-        this.type = type;
-        this.format = format;
     }
 
     public Long getId() {
@@ -92,5 +90,13 @@ public class Wod {
 
     public void setTimeCap(Short timeCap) {
         this.timeCap = timeCap;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

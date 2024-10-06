@@ -22,6 +22,9 @@
             <column name="rounds" type="SMALLINT">
                 <constraints nullable="false"/>
             </column>
+            <column name="workout_date" type="date">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
     </changeSet>
 

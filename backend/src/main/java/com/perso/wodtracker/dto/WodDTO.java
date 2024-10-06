@@ -3,6 +3,7 @@ package com.perso.wodtracker.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -12,6 +13,7 @@ public class WodDTO {
     private String formatWod;
     private short timeLimit;
     private short rounds;
+    private LocalDate workoutDate;
     private List<ExerciseDTO> exercises;
 
     public String getTypeWod() {
@@ -44,6 +46,14 @@ public class WodDTO {
 
     public void setRounds(short rounds) {
         this.rounds = rounds;
+    }
+
+    public LocalDate getWorkoutDate() {
+        return workoutDate;
+    }
+
+    public void setWorkoutDate(LocalDate date) {
+        this.workoutDate = date;
     }
 
     public List<ExerciseDTO> getExercises() {

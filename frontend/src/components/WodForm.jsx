@@ -9,6 +9,7 @@ import { addWod, updateWod } from "../redux/wodSlice";
 const WodForm = () => {
   const [typeWod, setTypeWod] = useState(WOD_TYPES[0].value);
   const [formatWod, setFormatWod] = useState(WOD_FORMATS[0].value);
+  const [workoutDate, setWorkoutDate] = useState("");
   const [timeLimit, setTimeLimit] = useState(1);
   const [rounds, setRounds] = useState(1);
   const [exercises, setExercises] = useState([]);
@@ -25,6 +26,7 @@ const WodForm = () => {
         setFormatWod(wod.formatWod);
         setTimeLimit(wod.timeLimit);
         setRounds(wod.rounds);
+        setWorkoutDate(wod.date);
         const sorted = [...wod.exercises].sort((a, b) => a.order - b.order);
         setExercises(sorted);
       }
@@ -74,6 +76,10 @@ const WodForm = () => {
     }));
   };
 
+  const handleDateChange = (event) => {
+    setWorkoutDate(event.target.value);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -85,6 +91,7 @@ const WodForm = () => {
       formatWod,
       timeLimit,
       rounds,
+      workoutDate,
       exercises: exercises.map((ex) => ({
         order: ex.order,
         reps: ex.reps,
@@ -163,6 +170,16 @@ const WodForm = () => {
                 value={rounds}
                 onChange={(e) => setRounds(e.target.value)}
                 className="ml-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-16"
+              />
+            </li>
+            <li>
+              <label>Workout Date: </label>
+              <input
+                type="date"
+                value={workoutDate}
+                onChange={handleDateChange}
+                required
+                className="ml-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-36"
               />
             </li>
             <li>

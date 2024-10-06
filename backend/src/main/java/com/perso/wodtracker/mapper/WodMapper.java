@@ -17,6 +17,7 @@ public class WodMapper {
         dto.setFormatWod(wod.getFormat().trim());
         dto.setTimeLimit(wod.getTimeCap().toString());
         dto.setRounds(wod.getRounds().toString());
+        dto.setDate(wod.getDate());
 
         // Mapper les compositions vers la liste des `ExerciseDTO`
         dto.setExercises(wod.getCompositions().stream()

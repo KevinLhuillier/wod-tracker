@@ -1,6 +1,7 @@
 package com.perso.wodtracker.dto;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class WodResponseDTO {
@@ -9,6 +10,7 @@ public class WodResponseDTO {
     private String formatWod;
     private String timeLimit;
     private String rounds;
+    private LocalDate date;
     private List<ExerciseDTO> exercises;
 
 
@@ -52,6 +54,14 @@ public class WodResponseDTO {
 
     public void setRounds(String rounds) {
         this.rounds = rounds;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public List<ExerciseDTO> getExercises() {

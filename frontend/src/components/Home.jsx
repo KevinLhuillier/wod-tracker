@@ -28,7 +28,7 @@ const Home = () => {
             Votre Suivi
           </p>
           <button
-            className="bg-black p-2 rounded-full text-white transition-transform transform duration-100  hover:bg-white hover:text-black border-black border-2"
+            className="bg-black p-2 rounded text-white transition-transform transform duration-100  hover:bg-white hover:text-black border-black border-2"
             onClick={() => navigate("/addWod")}
           >
             Add WOD
@@ -84,14 +84,17 @@ const Home = () => {
         </div>
         {/* Wod History  */}
         <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-black font-bold">Workouts History</h2>
+          <h2 className="mb-6 text-black font-bold">Workouts History</h2>
           {status === "loading" && <p>Loading...</p>}
           {status === "failed" && <p>{error}</p>}
           <ul>
             {wods.map((wod) => (
               <li key={wod.wodId} className="border-b-2 flex p-4">
                 <h3 className="pr-2">{wod.typeWod}</h3>
-                <div> - {wod.formatWod}</div>
+                <div> - &nbsp; {wod.formatWod} &nbsp; &nbsp;</div>
+                <div className="rounded-full bg-green-600 px-3 text-white">
+                  {wod.date}
+                </div>
                 <Link
                   to={`/edit/${wod.wodId}`}
                   className="ml-4 hover:text-blue-500"
