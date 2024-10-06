@@ -1,61 +1,96 @@
 package com.perso.wodtracker.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name="wods", schema="public")
 public class Wod {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "wod_id")
+    private Long wodId;
 
-    private String name;
+    @Column(name = "type", nullable = false)
+    private String type;
 
-    @Enumerated(EnumType.STRING)
-    private WodType type;
+    @Column(name = "format", nullable = false)
+    private String format;
 
-    private String description;
+    @Column(name = "time_cap", nullable = false)
+    private Short timeCap;
+
+    @Column(name = "rounds", nullable = false)
+    private Short rounds;
+
+    @OneToMany(mappedBy = "wod", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Composition> compositions;
 
     // Constructeur par défaut
     public Wod() {
     }
 
-    public Wod(Long id, String name, WodType type, String description) {
-        this.id = id;
-        this.name = name;
+    public Wod(Long id, String type, String format) {
+        this.wodId = id;
         this.type = type;
-        this.description = description;
+        this.format = format;
     }
 
     public Long getId() {
-        return id;
+        return wodId;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.wodId = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFormat() {
+        return format;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFormat(String format) {
+        this.format = format;
     }
 
-    public WodType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(WodType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public String getDescription() {
-        return description;
+    public Long getWodId() {
+        return wodId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setWodId(Long wodId) {
+        this.wodId = wodId;
+    }
+
+    public List<Composition> getCompositions() {
+        return compositions;
+    }
+
+    public void setCompositions(List<Composition> compositions) {
+        this.compositions = compositions;
+    }
+
+    public Short getRounds() {
+        return rounds;
+    }
+
+    public void setRounds(Short rounds) {
+        this.rounds = rounds;
+    }
+
+    public Short getTimeCap() {
+        return timeCap;
+    }
+
+    public void setTimeCap(Short timeCap) {
+        this.timeCap = timeCap;
     }
 }

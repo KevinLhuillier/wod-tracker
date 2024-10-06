@@ -1,37 +1,63 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import Menu from "./Menu";
 import { WOD_TYPES, WOD_FORMATS, EXERCISES } from "./constants";
+import { addWod, updateWod } from "../redux/wodSlice";
 
 const WodForm = () => {
-  const [typeWod, setTypeWod] = useState(WOD_TYPES[0]);
-  const [formatWod, setFormatWod] = useState(WOD_FORMATS[0]);
-  const [timeLimit, setTimeLimit] = useState(0);
-  const [rounds, setRounds] = useState(0);
+  const [typeWod, setTypeWod] = useState(WOD_TYPES[0].value);
+  const [formatWod, setFormatWod] = useState(WOD_FORMATS[0].value);
+  const [timeLimit, setTimeLimit] = useState(1);
+  const [rounds, setRounds] = useState(1);
   const [exercises, setExercises] = useState([]);
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const navigateTo = useNavigate();
+  const wods = useSelector((state) => state.wods.wods);
+
+  useEffect(() => {
+    if (id) {
+      const wod = wods.find((w) => w.wodId == id);
+      if (wod) {
+        setTypeWod(wod.typeWod);
+        setFormatWod(wod.formatWod);
+        setTimeLimit(wod.timeLimit);
+        setRounds(wod.rounds);
+        const sorted = [...wod.exercises].sort((a, b) => a.order - b.order);
+        setExercises(sorted);
+      }
+    }
+  }, [id, wods]);
 
   const handleAddExercise = () => {
-    setExercises([
-      ...exercises,
-      {
-        skill: EXERCISES[0].skill,
-        weight: "",
-      },
-    ]);
+    setExercises(
+      updateOrder([
+        ...exercises,
+        {
+          reps: 1,
+          skill: EXERCISES[0].skill,
+          weight: 0,
+        },
+      ])
+    );
   };
 
   const handleAddSpliceExercise = (index) => {
     const newExercises = [...exercises];
     const newExercise = {
+      reps: 1,
       skill: EXERCISES[0].skill,
-      weight: "",
+      weight: 0,
     };
     newExercises.splice(index + 1, 0, newExercise);
-    setExercises(newExercises);
+    setExercises(updateOrder(newExercises));
   };
 
   const handleDeleteExercise = (index) => {
     const newExercises = exercises.filter((_, i) => i !== index);
-    setExercises(newExercises);
+    setExercises(updateOrder(newExercises));
   };
 
   const handleExerciseChange = (index, field, value) => {
@@ -41,27 +67,39 @@ const WodForm = () => {
     setExercises(updatedExercises);
   };
 
+  const updateOrder = (exercisesList) => {
+    return exercisesList.map((exercise, index) => ({
+      ...exercise,
+      order: index + 1, // Met à jour l'ordre en fonction de l'index
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // const wod = {
-    //   typeWod,
-    //   exercises: exercises.map((ex) => ({
-    //     skill: ex.skill,
-    //     order: ex.order,
-    //     weight: ex.weight,
-    //   })),
-    //   timeLimit,
-    // };
+    const orderedExercises = updateOrder(exercises);
+    setExercises(orderedExercises);
 
-    // axios
-    //   .post("http://localhost:8080/api/wods", wod)
-    //   .then((response) => {
-    //     console.log("WOD créé avec succès", response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Erreur lors de la création du WOD", error);
-    //   });
+    const wod = {
+      typeWod,
+      formatWod,
+      timeLimit,
+      rounds,
+      exercises: exercises.map((ex) => ({
+        order: ex.order,
+        reps: ex.reps,
+        skill: ex.skill,
+        weight: ex.weight,
+      })),
+    };
+
+    console.log("WOD :", wod);
+
+    if (id) {
+      dispatch(updateWod({ id, wod })).then(() => navigateTo("/"));
+    } else {
+      dispatch(addWod(wod)).then(() => navigateTo("/"));
+    }
   };
 
   return (
@@ -70,7 +108,7 @@ const WodForm = () => {
       {/* Contenu principal */}
       <div className="w-full h-full p-6 overflow-auto">
         <div className="text-2xl font-semibold text-gray-800 mb-6">
-          Add a WOD
+          {id ? "Update" : "Add"} a WOD
         </div>
 
         {/* Wod Form  */}
@@ -87,8 +125,8 @@ const WodForm = () => {
                 className="ml-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
               >
                 {WOD_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.value} value={type.value}>
+                    {type.label}
                   </option>
                 ))}
               </select>
@@ -101,8 +139,8 @@ const WodForm = () => {
                 className="ml-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
               >
                 {WOD_FORMATS.map((format) => (
-                  <option key={format} value={format}>
-                    {format}
+                  <option key={format.value} value={format.value}>
+                    {format.label}
                   </option>
                 ))}
               </select>
@@ -111,6 +149,7 @@ const WodForm = () => {
               <label>Time Cap (min): </label>
               <input
                 type="number"
+                min="1"
                 value={timeLimit}
                 onChange={(e) => setTimeLimit(e.target.value)}
                 className="ml-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-16"
@@ -120,6 +159,7 @@ const WodForm = () => {
               <label>Rounds: </label>
               <input
                 type="number"
+                min="1"
                 value={rounds}
                 onChange={(e) => setRounds(e.target.value)}
                 className="ml-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-16"
@@ -150,19 +190,20 @@ const WodForm = () => {
                   onClick={() => handleDeleteExercise(index)}
                   className="mr-2 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
                 >
-                  <i class="fa-solid fa-trash-can"></i>
+                  <i className="fa-solid fa-trash-can"></i>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleAddSpliceExercise(index)}
                   className="mr-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
                 >
-                  <i class="fa-solid fa-plus"></i>
+                  <i className="fa-solid fa-plus"></i>
                 </button>
-                <label>Step {index + 1} - </label>
+                <label>Step {exercise.order} - </label>
                 <label>Reps: </label>
                 <input
                   type="number"
+                  min="1"
                   value={exercise.reps}
                   onChange={(e) =>
                     handleExerciseChange(index, "reps", e.target.value)
@@ -178,25 +219,31 @@ const WodForm = () => {
                   className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-60"
                 >
                   <optgroup label="Weightlifting">
-                    {EXERCISES.filter((ex) => ex.type == "Weight").map((ex) => (
-                      <option key={ex.skill} value={ex.skill}>
-                        {ex.skill}
-                      </option>
-                    ))}
+                    {EXERCISES.filter((ex) => ex.type == "Weightlifting")
+                      .sort((a, b) => a.skill.localeCompare(b.skill))
+                      .map((ex) => (
+                        <option key={ex.skill} value={ex.skill}>
+                          {ex.skill}
+                        </option>
+                      ))}
                   </optgroup>
-                  <optgroup label="Gymnastic">
-                    {EXERCISES.filter((ex) => ex.type == "Gym").map((ex) => (
-                      <option key={ex.skill} value={ex.skill}>
-                        {ex.skill}
-                      </option>
-                    ))}
+                  <optgroup label="Bodyweight">
+                    {EXERCISES.filter((ex) => ex.type == "Bodyweight")
+                      .sort((a, b) => a.skill.localeCompare(b.skill))
+                      .map((ex) => (
+                        <option key={ex.skill} value={ex.skill}>
+                          {ex.skill}
+                        </option>
+                      ))}
                   </optgroup>
                   <optgroup label="Cardio">
-                    {EXERCISES.filter((ex) => ex.type == "Cardio").map((ex) => (
-                      <option key={ex.skill} value={ex.skill}>
-                        {ex.skill}
-                      </option>
-                    ))}
+                    {EXERCISES.filter((ex) => ex.type == "Cardio")
+                      .sort((a, b) => a.skill.localeCompare(b.skill))
+                      .map((ex) => (
+                        <option key={ex.skill} value={ex.skill}>
+                          {ex.skill}
+                        </option>
+                      ))}
                   </optgroup>
                 </select>
                 {/* Charges si exercice d'haltérophilie */}
@@ -205,12 +252,13 @@ const WodForm = () => {
                   <>
                     <label>Weight (kg):</label>
                     <input
-                      type="text"
+                      type="number"
+                      min="0"
                       value={exercise.weight}
                       onChange={(e) =>
                         handleExerciseChange(index, "weight", e.target.value)
                       }
-                      className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-12"
+                      className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-16"
                     />
                   </>
                 )}
@@ -222,7 +270,7 @@ const WodForm = () => {
             type="submit"
             className="bg-blue-500 mt-6 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Create WOD
+            {id ? "Update" : "Create"} WOD
           </button>
         </form>
       </div>

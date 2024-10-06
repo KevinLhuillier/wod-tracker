@@ -1,0 +1,63 @@
+INSERT INTO public.skills(	skill_id, type, name) VALUES (1, 'Bodyweight', 'Pull-up');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (2, 'Bodyweight', 'Chest-to-bar');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (3, 'Bodyweight', 'Bar Muscle-up');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (4, 'Bodyweight', 'Ring Muscle-up');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (5, 'Bodyweight', 'Air Squat');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (6, 'Bodyweight', 'Pistol Squat');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (7, 'Bodyweight', 'Burpee');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (8, 'Bodyweight', 'Push-up');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (9, 'Bodyweight', 'Handstand Push-up');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (10, 'Bodyweight', 'Free Handstand Push-up');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (11, 'Bodyweight', 'Handstand Walk');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (12, 'Bodyweight', 'Dip');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (13, 'Bodyweight', 'Sit-up');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (14, 'Bodyweight', 'Toes-to-bar');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (15, 'Bodyweight', 'L-sit');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (16, 'Bodyweight', 'Rope Climb');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (17, 'Bodyweight', 'Legless Rope Climb');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (18, 'Bodyweight', 'Pull-over');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (19, 'Bodyweight', 'Skin the Cat');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (20, 'Bodyweight', 'Wall Walk');
+
+INSERT INTO public.skills(	skill_id, type, name) VALUES (21, 'Weightlifting', 'Deadlift');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (22, 'Weightlifting', 'Dumbbell Snatch');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (23, 'Weightlifting', 'Hang Snatch');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (24, 'Weightlifting', 'Hang Clean');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (25, 'Weightlifting', 'Hang Clean & Jerk');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (26, 'Weightlifting', 'Clean');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (27, 'Weightlifting', 'Clean & Jerk');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (28, 'Weightlifting', 'Snatch');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (29, 'Weightlifting', 'Front Squat');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (30, 'Weightlifting', 'Back Squat');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (31, 'Weightlifting', 'Overhead Squat');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (32, 'Weightlifting', 'Squat Snatch');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (33, 'Weightlifting', 'Squat Clean');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (34, 'Weightlifting', 'Push Press');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (35, 'Weightlifting', 'Jerk');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (36, 'Weightlifting', 'Lunge');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (37, 'Weightlifting', 'Bench Press');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (38, 'Weightlifting', 'Farmers Carry');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (39, 'Weightlifting', 'Thruster');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (40, 'Weightlifting', 'Cluster');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (41, 'Weightlifting', 'Turkish Get-up');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (42, 'Weightlifting', 'Russian Swing');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (43, 'Weightlifting', 'American Swing');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (44, 'Weightlifting', 'Medicine-ball Clean');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (45, 'Weightlifting', 'Wall-ball Shot');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (46, 'Weightlifting', 'Zercher Squat');
+
+
+INSERT INTO public.skills(	skill_id, type, name) VALUES (47, 'Cardio', 'Row');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (48, 'Cardio', 'Skierg');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (49, 'Cardio', 'Bikerg');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (50, 'Cardio', 'Echo Bike');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (51, 'Cardio', 'Assault Bike');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (52, 'Cardio', 'Run');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (53, 'Cardio', 'Crossover');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (54, 'Cardio', 'Single-under');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (55, 'Cardio', 'Double-under');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (56, 'Cardio', 'Box Jump');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (57, 'Cardio', 'Box Step-up');
+INSERT INTO public.skills(	skill_id, type, name) VALUES (58, 'Cardio', 'Burpee Box Jump-over');
+
+

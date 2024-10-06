@@ -1,7 +1,8 @@
 package com.perso.wodtracker.model;
 
 public enum WodType {
-    AMRAP,
-    EMOM,
-    FOR_TIME
+    WOD,
+    CONDITIONING,
+    WEIGHTLIFTING,
+    GYMNASTIC
 }

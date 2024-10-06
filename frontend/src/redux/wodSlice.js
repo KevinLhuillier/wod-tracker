@@ -9,20 +9,23 @@ export const fetchWods = createAsyncThunk("wods/fetchWods", async () => {
 });
 
 export const addWod = createAsyncThunk("wods/addWod", async (wod) => {
-  const response = await axios.post("http://localhost:8080/api/wods", wod);
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const response = await axios.post(`${apiUrl}/wods`, wod);
   return response.data;
 });
 
-export const updateWod = createAsyncThunk("wods/updateWod", async (wod) => {
-  const response = await axios.put(
-    `http://localhost:8080/api/wods/${wod.id}`,
-    wod
-  );
-  return response.data;
-});
+export const updateWod = createAsyncThunk(
+  "wods/updateWod",
+  async ({ id, wod }) => {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const response = await axios.put(`${apiUrl}/wods/${id}`, wod);
+    return response.data;
+  }
+);
 
 export const deleteWod = createAsyncThunk("wods/deleteWod", async (id) => {
-  await axios.delete(`http://localhost:8080/api/wods/${id}`);
+  const apiUrl = import.meta.env.VITE_API_URL;
+  await axios.delete(`${apiUrl}/wods/${id}`);
   return id;
 });
 
@@ -48,16 +51,19 @@ const wodSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(addWod.fulfilled, (state, action) => {
-        state.wods.push(action.payload);
+        // state.wods.push(action.payload);
+        state.status = "idle";
       })
       .addCase(updateWod.fulfilled, (state, action) => {
-        const index = state.wods.findIndex(
-          (wod) => wod.id === action.payload.id
-        );
-        state.wods[index] = action.payload;
+        // const index = state.wods.findIndex(
+        //   (wod) => wod.wodId === action.payload.wodId
+        // );
+        // state.wods[index] = action.payload;
+        state.status = "idle";
       })
       .addCase(deleteWod.fulfilled, (state, action) => {
-        state.wods = state.wods.filter((wod) => wod.id !== action.payload);
+        state.wods = state.wods.filter((wod) => wod.wodId !== action.payload);
+        state.status = "idle";
       });
   },
 });

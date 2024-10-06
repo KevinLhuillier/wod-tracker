@@ -1,7 +1,7 @@
 import Menu from "./Menu";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { fetchWods, deleteWod } from "../redux/wodSlice";
 
 const Home = () => {
@@ -23,10 +23,17 @@ const Home = () => {
       <Menu />
       {/* Contenu principal */}
       <div className="w-full h-full p-6 overflow-auto">
-        <div className="text-2xl font-semibold text-gray-800 mb-6">
-          Votre Suivi
+        <div className="flex items-center mb-6">
+          <p className="mr-4 text-2xl font-semibold text-gray-800">
+            Votre Suivi
+          </p>
+          <button
+            className="bg-black p-2 rounded-full text-white transition-transform transform duration-100  hover:bg-white hover:text-black border-black border-2"
+            onClick={() => navigate("/addWod")}
+          >
+            Add WOD
+          </button>
         </div>
-
         {/* Cartes statistiques */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 ease-in-out">
@@ -82,21 +89,25 @@ const Home = () => {
           {status === "failed" && <p>{error}</p>}
           <ul>
             {wods.map((wod) => (
-              <li key={wod.id} className="border-b-2 flex p-4">
-                <h3 className="pr-2">
-                  {wod.name} ({wod.type})
-                </h3>
-                <div>- {wod.description}</div>
+              <li key={wod.wodId} className="border-b-2 flex p-4">
+                <h3 className="pr-2">{wod.typeWod}</h3>
+                <div> - {wod.formatWod}</div>
+                <Link
+                  to={`/edit/${wod.wodId}`}
+                  className="ml-4 hover:text-blue-500"
+                >
+                  <i className="fa-solid fa-pen-to-square"></i>
+                </Link>
+                <button
+                  className="ml-4 hover:text-red-500"
+                  onClick={() => dispatch(deleteWod(wod.wodId))}
+                >
+                  <i className="fa-solid fa-circle-minus"></i>
+                </button>
               </li>
             ))}
           </ul>
         </div>
-        <button
-          className="absolute right-0 bottom-0 bg-black p-3 rounded-full mb-10 mr-8 text-white transition-transform transform duration-100  hover:bg-white hover:text-black hover:border-black hover:border-2"
-          onClick={() => navigate("/addWod")}
-        >
-          + WOD
-        </button>
       </div>
     </div>
   );

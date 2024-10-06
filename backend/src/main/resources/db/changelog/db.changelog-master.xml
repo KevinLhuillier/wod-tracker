@@ -5,24 +5,82 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="1" author="kevin">
-        <createTable tableName="users">
-            <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="name" type="varchar(255)"/>
-            <column name="email" type="varchar(255)"/>
-        </createTable>
-    </changeSet>
-    <changeSet id="2" author="kevin">
+    <changeSet id="001-create-wods" author="kevin">
         <createTable tableName="wods">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="wod_id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="name" type="varchar(255)"/>
-            <column name="type" type="varchar(50)"/>
-            <column name="description" type="text"/>
+            <column name="type" type="char(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="format" type="char(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_cap" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rounds" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="002-create-skills" author="author">
+        <createTable tableName="skills">
+            <column name="skill_id" type="INT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="type" type="CHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="CHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-insert-skills" author="author">
+        <sqlFile path="classpath:scripts/insert-skills.sql" />
+    </changeSet>
+
+
+    <changeSet id="003-create-composition" author="author">
+        <createTable tableName="composition">
+            <column name="composition_id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="wod_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="step_number" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="skill_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reps" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weight" type="SMALLINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-add-composition-FK" author="author">
+        <addForeignKeyConstraint
+                baseColumnNames="wod_id"
+                baseTableName="composition"
+                constraintName="fk_composition_wod"
+                referencedColumnNames="wod_id"
+                referencedTableName="wods"/>
+
+        <addForeignKeyConstraint
+                baseColumnNames="skill_id"
+                baseTableName="composition"
+                constraintName="fk_composition_skill"
+                referencedColumnNames="skill_id"
+                referencedTableName="skills"/>
+    </changeSet>
+
+
 
 </databaseChangeLog>
