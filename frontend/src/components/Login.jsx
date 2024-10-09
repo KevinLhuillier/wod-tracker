@@ -8,20 +8,18 @@ const Login = () => {
   const [logError, setLogError] = useState("");
   const navigate = useNavigate();
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        null,
-        {
-          params: {
-            username,
-            password,
-          },
-        }
-      );
+      const response = await axios.post(`${apiUrl}/auth/login`, null, {
+        params: {
+          username,
+          password,
+        },
+      });
 
       if (response.status == 200) {
         // Stocker l'état de connexion dans le localStorage
