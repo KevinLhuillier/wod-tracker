@@ -84,6 +84,20 @@
                 referencedTableName="skills"/>
     </changeSet>
 
+    <changeSet id="005-add-users" author="author">
+        <createTable tableName="users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(50)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 
 
 </databaseChangeLog>
