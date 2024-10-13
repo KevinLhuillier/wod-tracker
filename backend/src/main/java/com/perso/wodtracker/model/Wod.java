@@ -17,9 +17,6 @@ public class Wod {
     @Column(name = "type", nullable = false)
     private String type;
 
-    @Column(name = "format", nullable = false)
-    private String format;
-
     @Column(name = "time_cap", nullable = false)
     private Short timeCap;
 
@@ -42,14 +39,6 @@ public class Wod {
 
     public void setId(Long id) {
         this.wodId = id;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
     }
 
     public String getType() {

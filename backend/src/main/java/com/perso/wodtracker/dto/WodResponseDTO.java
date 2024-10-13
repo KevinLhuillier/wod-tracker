@@ -7,12 +7,10 @@ import java.util.List;
 public class WodResponseDTO {
     private Long wodId;
     private String typeWod;
-    private String formatWod;
     private String timeLimit;
     private String rounds;
     private LocalDate date;
-    private List<ExerciseDTO> exercises;
-
+    private List<BlockDTO> blocks;
 
     // Getters et Setters
 
@@ -30,14 +28,6 @@ public class WodResponseDTO {
 
     public void setTypeWod(String typeWod) {
         this.typeWod = typeWod;
-    }
-
-    public String getFormatWod() {
-        return formatWod;
-    }
-
-    public void setFormatWod(String formatWod) {
-        this.formatWod = formatWod;
     }
 
     public String getTimeLimit() {
@@ -64,11 +54,11 @@ public class WodResponseDTO {
         this.date = date;
     }
 
-    public List<ExerciseDTO> getExercises() {
-        return exercises;
+    public List<BlockDTO> getBlocks() {
+        return blocks;
     }
 
-    public void setExercises(List<ExerciseDTO> exercises) {
-        this.exercises = exercises;
+    public void setBlocks(List<BlockDTO> blocks) {
+        this.blocks = blocks;
     }
 }

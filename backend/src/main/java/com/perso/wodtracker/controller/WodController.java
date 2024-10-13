@@ -25,7 +25,7 @@ public class WodController {
     private WodService wodService;
 
     @GetMapping
-    // Retourner tous les WODs sous forme de liste de WodResponseDTO
+//     Retourner tous les WODs sous forme de liste de WodResponseDTO
     public List<WodResponseDTO> getAllWods() {
         return wodRepository.findAll().stream()
                 .map(WodMapper::mapToWodResponseDTO) // Mapper chaque entité vers un DTO

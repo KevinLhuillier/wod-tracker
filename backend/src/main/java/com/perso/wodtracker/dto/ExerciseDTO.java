@@ -4,7 +4,7 @@ public class ExerciseDTO {
     private int order;
     private int reps;
     private String skill;
-    private Integer weight;
+    private Float weight;
 
     // Getters and Setters
 
@@ -32,11 +32,11 @@ public class ExerciseDTO {
         this.skill = skill;
     }
 
-    public Integer getWeight() {
+    public Float getWeight() {
         return weight;
     }
 
-    public void setWeight(Integer weight) {
+    public void setWeight(Float weight) {
         this.weight = weight;
     }
 }

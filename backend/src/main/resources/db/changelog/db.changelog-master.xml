@@ -13,9 +13,6 @@
             <column name="type" type="char(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="format" type="char(50)">
-                <constraints nullable="false"/>
-            </column>
             <column name="time_cap" type="SMALLINT">
                 <constraints nullable="false"/>
             </column>
@@ -28,7 +25,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="002-create-skills" author="author">
+    <changeSet id="002-create-skills" author="kevin">
         <createTable tableName="skills">
             <column name="skill_id" type="INT">
                 <constraints primaryKey="true" nullable="false"/>
@@ -42,12 +39,12 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="002-insert-skills" author="author">
+    <changeSet id="002-insert-skills" author="kevin">
         <sqlFile path="classpath:scripts/insert-skills.sql" />
     </changeSet>
 
 
-    <changeSet id="003-create-composition" author="author">
+    <changeSet id="003-create-composition" author="kevin">
         <createTable tableName="composition">
             <column name="composition_id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -55,7 +52,19 @@
             <column name="wod_id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="step_number" type="SMALLINT">
+            <column name="block_order" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="block_format" type="char(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="block_time_cap" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="block_rounds" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="step_order" type="SMALLINT">
                 <constraints nullable="false"/>
             </column>
             <column name="skill_id" type="INT">
@@ -64,11 +73,11 @@
             <column name="reps" type="SMALLINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="weight" type="SMALLINT"/>
+            <column name="weight" type="NUMERIC(5, 2)"/>
         </createTable>
     </changeSet>
 
-    <changeSet id="004-add-composition-FK" author="author">
+    <changeSet id="004-add-composition-FK" author="kevin">
         <addForeignKeyConstraint
                 baseColumnNames="wod_id"
                 baseTableName="composition"
@@ -84,7 +93,7 @@
                 referencedTableName="skills"/>
     </changeSet>
 
-    <changeSet id="005-add-users" author="author">
+    <changeSet id="005-add-users" author="kevin">
         <createTable tableName="users">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>

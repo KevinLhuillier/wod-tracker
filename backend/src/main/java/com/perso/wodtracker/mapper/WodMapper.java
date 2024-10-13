@@ -1,10 +1,13 @@
 package com.perso.wodtracker.mapper;
 
+import com.perso.wodtracker.dto.BlockDTO;
 import com.perso.wodtracker.dto.ExerciseDTO;
 import com.perso.wodtracker.dto.WodResponseDTO;
 import com.perso.wodtracker.model.Composition;
 import com.perso.wodtracker.model.Wod;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class WodMapper {
@@ -14,28 +17,46 @@ public class WodMapper {
         WodResponseDTO dto = new WodResponseDTO();
         dto.setWodId(wod.getWodId());
         dto.setTypeWod(wod.getType().trim());
-        dto.setFormatWod(wod.getFormat().trim());
         dto.setTimeLimit(wod.getTimeCap().toString());
         dto.setRounds(wod.getRounds().toString());
         dto.setDate(wod.getDate());
 
-        // Mapper les compositions vers la liste des `ExerciseDTO`
-        dto.setExercises(wod.getCompositions().stream()
-                .map(WodMapper::mapToExerciseDTO)
+        // Mapper les compositions vers les blocks
+        dto.setBlocks(wod.getCompositions().stream()
+                .collect(Collectors.groupingBy(Composition::getBlockOrder))
+                .entrySet().stream()
+                .map(entry -> mapToBlockDTO(Integer.valueOf(entry.getKey()), entry.getValue()))
                 .collect(Collectors.toList()));
 
         return dto;
     }
 
-    // Méthode pour mapper une Composition vers un ExerciseDTO
+    // Mapper un groupe de compositions vers un BlockDTO
+    private static BlockDTO mapToBlockDTO(Integer blockOrder, List<Composition> compositions) {
+        BlockDTO blockDTO = new BlockDTO();
+
+        // On suppose que toutes les compositions d'un block ont les mêmes caractéristiques de block
+        Composition firstComposition = compositions.get(0);
+        blockDTO.setOrder(blockOrder);
+        blockDTO.setFormat(firstComposition.getBlockFormat().trim());
+        blockDTO.setTimeLimit(firstComposition.getBlockTimeCap());
+        blockDTO.setRounds(firstComposition.getBlockRounds());
+
+        // Mapper chaque composition comme un step (ExerciseDTO)
+        blockDTO.setExercises(compositions.stream()
+                .map(WodMapper::mapToExerciseDTO)
+                .collect(Collectors.toList()));
+
+        return blockDTO;
+    }
+
+    // Mapper une Composition vers un ExerciseDTO
     private static ExerciseDTO mapToExerciseDTO(Composition composition) {
         ExerciseDTO dto = new ExerciseDTO();
-        dto.setOrder(composition.getStepNumber());
-        dto.setReps(Integer.valueOf(composition.getReps()));
+        dto.setOrder(composition.getStepOrder());
         dto.setSkill(composition.getSkill().getName().trim());
-
-        // Si le poids est null, mettre une chaîne vide
-        dto.setWeight(composition.getWeight() != null ? Integer.valueOf(composition.getWeight()) : 0);
+        dto.setReps(Integer.valueOf(composition.getReps()));
+        dto.setWeight(composition.getWeight() != null ? Float.valueOf(composition.getWeight()) : 0);
 
         return dto;
     }

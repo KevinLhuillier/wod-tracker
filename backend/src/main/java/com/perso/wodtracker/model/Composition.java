@@ -19,8 +19,20 @@ public class Composition {
     @JsonIgnore
     private Wod wod;
 
-    @Column(name = "step_number", nullable = false)
-    private Short stepNumber;
+    @Column(name = "block_order", nullable = false)
+    private Short blockOrder;
+
+    @Column(name = "block_format", nullable = false)
+    private String blockFormat;
+
+    @Column(name = "block_time_cap", nullable = false)
+    private Short blockTimeCap;
+
+    @Column(name = "block_rounds", nullable = false)
+    private Short blockRounds;
+
+    @Column(name = "step_order", nullable = false)
+    private Short stepOrder;
 
     @ManyToOne
     @JoinColumn(name = "skill_id", nullable = false)
@@ -30,7 +42,7 @@ public class Composition {
     private Short reps;
 
     @Column(name = "weight")
-    private Short weight;
+    private Float weight;
 
     public Integer getCompositionId() {
         return compositionId;
@@ -44,12 +56,12 @@ public class Composition {
         this.wod = wod;
     }
 
-    public Short getStepNumber() {
-        return stepNumber;
+    public Short getStepOrder() {
+        return stepOrder;
     }
 
-    public void setStepNumber(Short stepNumber) {
-        this.stepNumber = stepNumber;
+    public void setStepOrder(Short stepOrder) {
+        this.stepOrder = stepOrder;
     }
 
     public Skill getSkill() {
@@ -68,12 +80,44 @@ public class Composition {
         this.reps = reps;
     }
 
-    public Short getWeight() {
+    public Float getWeight() {
         return weight;
     }
 
-    public void setWeight(Short weight) {
+    public void setWeight(Float weight) {
         this.weight = weight;
+    }
+
+    public void setBlockOrder(short blockOrder) {
+        this.blockOrder = blockOrder;
+    }
+
+    public short getBlockOrder() {
+        return blockOrder;
+    }
+
+    public void setBlockFormat(String blockFormat) {
+        this.blockFormat = blockFormat;
+    }
+
+    public String getBlockFormat() {
+        return blockFormat;
+    }
+
+    public void setBlockTimeCap(short blockTimeCap) {
+        this.blockTimeCap = blockTimeCap;
+    }
+
+    public short getBlockTimeCap() {
+        return blockTimeCap;
+    }
+
+    public void setBlockRounds(short blockRounds) {
+        this.blockRounds = blockRounds;
+    }
+
+    public short getBlockRounds() {
+        return blockRounds;
     }
 // Getters and Setters
 }

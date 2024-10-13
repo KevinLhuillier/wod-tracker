@@ -1,5 +1,6 @@
 package com.perso.wodtracker.service;
 
+import com.perso.wodtracker.dto.BlockDTO;
 import com.perso.wodtracker.dto.ExerciseDTO;
 import com.perso.wodtracker.dto.WodDTO;
 import com.perso.wodtracker.dto.WodResponseDTO;
@@ -41,7 +42,6 @@ public class WodService {
         // 1. Créer l'entité Wod
         Wod wod = new Wod();
         wod.setType(wodDTO.getTypeWod());
-        wod.setFormat(wodDTO.getFormatWod());
         wod.setTimeCap(wodDTO.getTimeLimit());
         wod.setRounds(wodDTO.getRounds());
         wod.setDate(wodDTO.getWorkoutDate());
@@ -50,25 +50,30 @@ public class WodService {
         wod.setCompositions(new ArrayList<>()); // Important pour éviter les erreurs de nullité
 
         // 2. Créer les entités Composition à partir du JSON et les associer au Wod
-        for (ExerciseDTO exercise : wodDTO.getExercises()) {
-            // Récupérer le Skill correspondant au nom
-            Skill skill = skillRepository.findByName(exercise.getSkill());
-            if (skill == null) {
-                throw new RuntimeException("Skill not found: " + exercise.getSkill());
+        for (BlockDTO block : wodDTO.getBlocks()) {
+            for (ExerciseDTO exercise : block.getExercises()) {
+                // Créer une nouvelle entité Composition pour chaque exercice
+                Composition composition = new Composition();
+                composition.setBlockOrder((short) block.getOrder());
+                composition.setBlockFormat(block.getFormat());
+                composition.setBlockTimeCap((short) block.getTimeLimit());
+                composition.setBlockRounds((short) block.getRounds());
+
+                // Récupérer le Skill correspondant au nom
+                Skill skill = skillRepository.findByName(exercise.getSkill());
+                if (skill == null) {
+                    throw new RuntimeException("Skill not found: " + exercise.getSkill());
+                }
+                composition.setStepOrder((short) exercise.getOrder());
+                composition.setSkill(skill);
+                composition.setReps((short) exercise.getReps());
+                composition.setWeight(exercise.getWeight() != null ? exercise.getWeight() : null);
+
+                // Associer Composition à Wod
+                composition.setWod(wod); // Composition connaît son Wod
+                wod.getCompositions().add(composition); // Wod connaît ses Compositions
             }
-
-            // Créer l'entité Composition
-            Composition composition = new Composition();
-            composition.setStepNumber((short) exercise.getOrder());
-            composition.setSkill(skill);
-            composition.setReps((short) exercise.getReps());
-            composition.setWeight(exercise.getWeight() != null ? exercise.getWeight().shortValue() : null);
-
-            // Associer Composition à Wod
-            composition.setWod(wod); // Composition connaît son Wod
-            wod.getCompositions().add(composition); // Wod connaît ses Compositions
         }
-
         // 3. Sauvegarder le Wod (cela sauvegarde aussi les Compositions grâce à CascadeType.ALL)
         return wodRepository.save(wod);
     }
@@ -77,41 +82,52 @@ public class WodService {
     public Wod updateWod(Wod wod, WodDTO wodDTO) {
         // 1. Mettre à jour les attributs de base du Wod
         wod.setType(wodDTO.getTypeWod());
-        wod.setFormat(wodDTO.getFormatWod());
         wod.setTimeCap(wodDTO.getTimeLimit());
         wod.setRounds(wodDTO.getRounds());
         wod.setDate(wodDTO.getWorkoutDate());
 
-        // 2. Gérer les compositions existantes
-        Map<Short, Composition> existingCompositions = wod.getCompositions().stream()
-                .collect(Collectors.toMap(Composition::getStepNumber, composition -> composition));
+        // 2. Gérer les compositions existantes (triées par block_order et step_order)
+        Map<String, Composition> existingCompositions = wod.getCompositions().stream()
+                .collect(Collectors.toMap(
+                        comp -> comp.getBlockOrder() + "-" + comp.getStepOrder(), // Clé basée sur block_order et step_order
+                        composition -> composition));
 
         // 3. Liste pour stocker les compositions mises à jour
         List<Composition> updatedCompositions = new ArrayList<>();
 
-        for (ExerciseDTO exercise : wodDTO.getExercises()) {
-            // Récupérer le Skill correspondant au nom
-            Skill skill = skillRepository.findByName(exercise.getSkill());
-            if (skill == null) {
-                throw new RuntimeException("Skill not found: " + exercise.getSkill());
+        for (BlockDTO block : wodDTO.getBlocks()) {
+            for (ExerciseDTO exercise : block.getExercises()) {
+                // Récupérer le Skill correspondant au nom
+                Skill skill = skillRepository.findByName(exercise.getSkill());
+                if (skill == null) {
+                    throw new RuntimeException("Skill not found: " + exercise.getSkill());
+                }
+
+                // Créer une clé unique pour la composition (block_order + step_order)
+                String compositionKey = block.getOrder() + "-" + exercise.getOrder();
+
+                // Vérifier si une composition avec le même block_order et step_order existe déjà
+                Composition composition = existingCompositions.get(compositionKey);
+                if (composition == null) {
+                    // Si elle n'existe pas, créer une nouvelle Composition
+                    composition = new Composition();
+                    composition.setWod(wod); // Associer la nouvelle Composition au Wod
+                }
+
+                // Mettre à jour les attributs de la Composition
+                composition.setBlockOrder((short) block.getOrder());
+                composition.setBlockFormat(block.getFormat());
+                composition.setBlockTimeCap((short) block.getTimeLimit());
+                composition.setBlockRounds((short) block.getRounds());
+
+                composition.setStepOrder((short) exercise.getOrder());
+                composition.setSkill(skill);
+                composition.setReps((short) exercise.getReps());
+                composition.setWeight(exercise.getWeight() != null ? exercise.getWeight() : null);
+
+                // Ajouter la composition mise à jour à la liste
+                updatedCompositions.add(composition);
             }
-
-            // Vérifier si une composition avec le même stepNumber existe déjà
-            Composition composition = existingCompositions.get((short) exercise.getOrder());
-            if (composition == null) {
-                // Si elle n'existe pas, créer une nouvelle Composition
-                composition = new Composition();
-                composition.setWod(wod); // Associer la nouvelle Composition au Wod
-            }
-
-            // Mettre à jour les attributs de la Composition
-            composition.setStepNumber((short) exercise.getOrder());
-            composition.setSkill(skill);
-            composition.setReps((short) exercise.getReps());
-            composition.setWeight(exercise.getWeight() != null ? exercise.getWeight().shortValue() : null);
-
-            // Ajouter la composition mise à jour à la liste
-            updatedCompositions.add(composition);
         }
 
         // 4. Supprimer les compositions qui ne sont plus présentes dans le DTO

@@ -8,11 +8,10 @@ import { addWod, updateWod } from "../redux/wodSlice";
 
 const WodForm = () => {
   const [typeWod, setTypeWod] = useState(WOD_TYPES[0].value);
-  const [formatWod, setFormatWod] = useState(WOD_FORMATS[0].value);
   const [workoutDate, setWorkoutDate] = useState("");
   const [timeLimit, setTimeLimit] = useState(1);
   const [rounds, setRounds] = useState(1);
-  const [exercises, setExercises] = useState([]);
+  const [blocks, setBlocks] = useState([]);
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigateTo = useNavigate();
@@ -23,27 +22,105 @@ const WodForm = () => {
       const wod = wods.find((w) => w.wodId == id);
       if (wod) {
         setTypeWod(wod.typeWod);
-        setFormatWod(wod.formatWod);
         setTimeLimit(wod.timeLimit);
         setRounds(wod.rounds);
         setWorkoutDate(wod.date);
-        const sorted = [...wod.exercises].sort((a, b) => a.order - b.order);
-        setExercises(sorted);
+        const sortedBlocksWithExercises = wod.blocks.map((block) => {
+          // Trier les exercices de chaque block par 'order'
+          const sortedExercises = [...block.exercises].sort(
+            (a, b) => a.order - b.order
+          );
+
+          // Retourner un nouveau bloc avec les exercices triés
+          return {
+            ...block,
+            exercises: sortedExercises,
+          };
+        });
+        const sortedBlocks = [...sortedBlocksWithExercises].sort(
+          (a, b) => a.order - b.order
+        );
+        setBlocks(sortedBlocks);
       }
     }
   }, [id, wods]);
 
-  const handleAddExercise = () => {
-    setExercises(
+  const handleAddBlock = () => {
+    setBlocks(
       updateOrder([
-        ...exercises,
+        ...blocks,
         {
-          reps: 1,
-          skill: EXERCISES[0].skill,
-          weight: 0,
+          format: WOD_FORMATS[0].label,
+          timeLimit: 1,
+          rounds: 1,
+          exercises: [],
         },
       ])
     );
+  };
+
+  const handleBlockChange = (blockIndex, field, value) => {
+    const updatedBlocks = blocks.map((block, index) =>
+      index === blockIndex
+        ? {
+            ...block,
+            [field]: value,
+          }
+        : block
+    );
+
+    setBlocks(updatedBlocks);
+  };
+
+  // const handleExerciseChange = (blockIndex, exerciseIndex, field, value) => {
+  //   const updatedBlocks = blocks.map((block, index) =>
+  //     index === blockIndex
+  //       ? {
+  //           ...block,
+  //           exercises: block.exercises.map((exercise, i) =>
+  //             i === exerciseIndex ? { ...exercise, [field]: value } : exercise
+  //           ),
+  //         }
+  //       : block
+  //   );
+  //   setBlocks(updatedBlocks);
+  // };
+
+  const handleDeleteBlock = (blockIndex) => {
+    const updatedBlocks = blocks.filter((_, i) => i !== blockIndex);
+    setBlocks(updateOrder(updatedBlocks));
+  };
+
+  // const handleAddExercise = () => {
+  //   setExercises(
+  //     updateOrder([
+  //       ...exercises,
+  //       {
+  //         reps: 1,
+  //         skill: EXERCISES[0].skill,
+  //         weight: 0,
+  //       },
+  //     ])
+  //   );
+  // };
+
+  const handleAddExercise = (blockIndex) => {
+    const updatedBlocks = blocks.map((block, index) =>
+      index == blockIndex
+        ? {
+            ...block,
+            exercises: updateOrder([
+              ...block.exercises,
+              {
+                reps: 1,
+                skill: EXERCISES[0].skill,
+                weight: 0,
+              },
+            ]),
+          }
+        : block
+    );
+    setBlocks(updateOrder(updatedBlocks));
   };
 
   const handleAddSpliceExercise = (index) => {
@@ -57,21 +134,37 @@ const WodForm = () => {
     setExercises(updateOrder(newExercises));
   };
 
-  const handleDeleteExercise = (index) => {
-    const newExercises = exercises.filter((_, i) => i !== index);
-    setExercises(updateOrder(newExercises));
-  };
-
-  const handleExerciseChange = (index, field, value) => {
-    const updatedExercises = exercises.map((exercise, i) =>
-      i === index ? { ...exercise, [field]: value } : exercise
+  const handleDeleteExercise = (blockIndex, exerciseIndex) => {
+    const updatedBlocks = blocks.map((block, index) =>
+      index === blockIndex
+        ? {
+            ...block,
+            exercises: updateOrder(
+              block.exercises.filter((_, i) => i !== exerciseIndex)
+            ),
+          }
+        : block
     );
-    setExercises(updatedExercises);
+    setBlocks(updatedBlocks);
   };
 
-  const updateOrder = (exercisesList) => {
-    return exercisesList.map((exercise, index) => ({
-      ...exercise,
+  const handleExerciseChange = (blockIndex, exerciseIndex, field, value) => {
+    const updatedBlocks = blocks.map((block, index) =>
+      index === blockIndex
+        ? {
+            ...block,
+            exercises: block.exercises.map((exercise, i) =>
+              i === exerciseIndex ? { ...exercise, [field]: value } : exercise
+            ),
+          }
+        : block
+    );
+    setBlocks(updatedBlocks);
+  };
+
+  const updateOrder = (itemsList) => {
+    return itemsList.map((item, index) => ({
+      ...item,
       order: index + 1, // Met à jour l'ordre en fonction de l'index
     }));
   };
@@ -83,20 +176,22 @@ const WodForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const orderedExercises = updateOrder(exercises);
-    setExercises(orderedExercises);
-
     const wod = {
       typeWod,
-      formatWod,
       timeLimit,
       rounds,
       workoutDate,
-      exercises: exercises.map((ex) => ({
-        order: ex.order,
-        reps: ex.reps,
-        skill: ex.skill,
-        weight: ex.weight,
+      blocks: blocks.map((block) => ({
+        order: block.order,
+        format: block.format,
+        timeLimit: block.timeLimit,
+        rounds: block.rounds,
+        exercises: block.exercises.map((ex) => ({
+          order: ex.order,
+          reps: ex.reps,
+          skill: ex.skill,
+          weight: ex.weight,
+        })),
       })),
     };
 
@@ -139,20 +234,6 @@ const WodForm = () => {
               </select>
             </li>
             <li>
-              <label>Format: </label>
-              <select
-                value={formatWod}
-                onChange={(e) => setFormatWod(e.target.value)}
-                className="ml-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
-              >
-                {WOD_FORMATS.map((format) => (
-                  <option key={format.value} value={format.value}>
-                    {format.label}
-                  </option>
-                ))}
-              </select>
-            </li>
-            <li>
               <label>Time Cap (min): </label>
               <input
                 type="number"
@@ -186,102 +267,174 @@ const WodForm = () => {
               {" "}
               <button
                 type="button"
-                onClick={handleAddExercise}
+                onClick={handleAddBlock}
                 className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
               >
-                + Step
+                + Block
               </button>
             </li>
           </ul>
-          {/* Steps */}
-          {exercises.length > 0 && (
-            <h2 className=" mt-6 text-2xl font-semibold text-gray-700 mb-4">
-              Steps
-            </h2>
-          )}
-          <ul>
-            {exercises.map((exercise, index) => (
-              <li key={index} className="mb-4">
+
+          {blocks.map((block, blockIndex) => (
+            <div key={block.order} className="mt-6 p-4 border-2 border-dashed">
+              <div className="mb-4 flex gap-4 items-center">
+                <h2 className="text-xl font-semibold text-gray-700">
+                  Block {blockIndex + 1}
+                </h2>
+
+                <div>
+                  <label>Format: </label>
+                  <select
+                    value={block.format}
+                    onChange={(e) =>
+                      handleBlockChange(blockIndex, "format", e.target.value)
+                    }
+                    className="ml-2 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
+                  >
+                    {WOD_FORMATS.map((format) => (
+                      <option key={format.value} value={format.value}>
+                        {format.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label>Time Cap (min): </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={block.timeLimit}
+                    onChange={(e) =>
+                      handleBlockChange(blockIndex, "timeLimit", e.target.value)
+                    }
+                    className="ml-2 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-16"
+                  />
+                </div>
+                <div>
+                  <label>Rounds: </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={block.rounds}
+                    onChange={(e) =>
+                      handleBlockChange(blockIndex, "rounds", e.target.value)
+                    }
+                    className="ml-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-16"
+                  />
+                </div>
                 <button
                   type="button"
-                  onClick={() => handleDeleteExercise(index)}
-                  className="mr-2 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
+                  onClick={() => handleAddExercise(blockIndex)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-2 rounded"
                 >
-                  <i className="fa-solid fa-trash-can"></i>
+                  + Step
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleAddSpliceExercise(index)}
-                  className="mr-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
+                  onClick={() => handleDeleteBlock(blockIndex)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-2 rounded"
                 >
-                  <i className="fa-solid fa-plus"></i>
+                  Delete
                 </button>
-                <label>Step {exercise.order} - </label>
-                <label>Reps: </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={exercise.reps}
-                  onChange={(e) =>
-                    handleExerciseChange(index, "reps", e.target.value)
-                  }
-                  className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-14"
-                />
-                <label>Skill: </label>
-                <select
-                  value={exercise.skill}
-                  onChange={(e) =>
-                    handleExerciseChange(index, "skill", e.target.value)
-                  }
-                  className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-60"
-                >
-                  <optgroup label="Weightlifting">
-                    {EXERCISES.filter((ex) => ex.type == "Weightlifting")
-                      .sort((a, b) => a.skill.localeCompare(b.skill))
-                      .map((ex) => (
-                        <option key={ex.skill} value={ex.skill}>
-                          {ex.skill}
-                        </option>
-                      ))}
-                  </optgroup>
-                  <optgroup label="Bodyweight">
-                    {EXERCISES.filter((ex) => ex.type == "Bodyweight")
-                      .sort((a, b) => a.skill.localeCompare(b.skill))
-                      .map((ex) => (
-                        <option key={ex.skill} value={ex.skill}>
-                          {ex.skill}
-                        </option>
-                      ))}
-                  </optgroup>
-                  <optgroup label="Cardio">
-                    {EXERCISES.filter((ex) => ex.type == "Cardio")
-                      .sort((a, b) => a.skill.localeCompare(b.skill))
-                      .map((ex) => (
-                        <option key={ex.skill} value={ex.skill}>
-                          {ex.skill}
-                        </option>
-                      ))}
-                  </optgroup>
-                </select>
-                {/* Charges si exercice d'haltérophilie */}
-                {EXERCISES.find((ex) => ex.skill === exercise.skill)
-                  ?.requiresWeight && (
-                  <>
-                    <label>Weight (kg):</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={exercise.weight}
-                      onChange={(e) =>
-                        handleExerciseChange(index, "weight", e.target.value)
-                      }
-                      className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-16"
-                    />
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
+              </div>
+              <div className="pl-4 border-l-4">
+                <ul>
+                  {block.exercises.map((exercise, exerciseIndex) => (
+                    <li key={exerciseIndex} className="mb-4">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleDeleteExercise(blockIndex, exerciseIndex)
+                        }
+                        className="mr-2 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
+                      >
+                        <i className="fa-solid fa-trash-can"></i>
+                      </button>
+                      <label>Step {exercise.order} - Reps: </label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={exercise.reps}
+                        onChange={(e) =>
+                          handleExerciseChange(
+                            blockIndex,
+                            exerciseIndex,
+                            "reps",
+                            e.target.value
+                          )
+                        }
+                        className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-14"
+                      />
+                      <label>Skill: </label>
+                      <select
+                        value={exercise.skill}
+                        onChange={(e) =>
+                          handleExerciseChange(
+                            blockIndex,
+                            exerciseIndex,
+                            "skill",
+                            e.target.value
+                          )
+                        }
+                        className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-60"
+                      >
+                        <optgroup label="Weightlifting">
+                          {EXERCISES.filter((ex) => ex.type == "Weightlifting")
+                            .sort((a, b) => a.skill.localeCompare(b.skill))
+                            .map((ex) => (
+                              <option key={ex.skill} value={ex.skill}>
+                                {ex.skill}
+                              </option>
+                            ))}
+                        </optgroup>
+                        <optgroup label="Bodyweight">
+                          {EXERCISES.filter((ex) => ex.type == "Bodyweight")
+                            .sort((a, b) => a.skill.localeCompare(b.skill))
+                            .map((ex) => (
+                              <option key={ex.skill} value={ex.skill}>
+                                {ex.skill}
+                              </option>
+                            ))}
+                        </optgroup>
+                        <optgroup label="Cardio">
+                          {EXERCISES.filter((ex) => ex.type == "Cardio")
+                            .sort((a, b) => a.skill.localeCompare(b.skill))
+                            .map((ex) => (
+                              <option key={ex.skill} value={ex.skill}>
+                                {ex.skill}
+                              </option>
+                            ))}
+                        </optgroup>
+                      </select>
+                      {EXERCISES.find((ex) => ex.skill === exercise.skill)
+                        ?.requiresWeight && (
+                        <>
+                          <label>Weight (kg):</label>
+                          <input
+                            type="number"
+                            min="0"
+                            max="999"
+                            step=".05"
+                            value={exercise.weight}
+                            onChange={(e) =>
+                              handleExerciseChange(
+                                blockIndex,
+                                exerciseIndex,
+                                "weight",
+                                e.target.value
+                              )
+                            }
+                            className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-22"
+                          />
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+
           {/* Boutons */}
           <button
             type="submit"
