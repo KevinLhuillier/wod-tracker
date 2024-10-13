@@ -17,6 +17,11 @@ const Home = () => {
     }
   }, [status, dispatch]);
 
+  // Trier les WODs par date décroissante (du plus récent au plus ancien)
+  const sortedWods = [...wods].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
+
   return (
     // Container principal
     <div className="flex flex-no-wrap">
@@ -88,10 +93,9 @@ const Home = () => {
           {status === "loading" && <p>Loading...</p>}
           {status === "failed" && <p>{error}</p>}
           <ul>
-            {wods.map((wod) => (
+            {sortedWods.map((wod) => (
               <li key={wod.wodId} className="border-b-2 flex p-4">
                 <h3 className="pr-2">{wod.typeWod}</h3>
-                <div> - &nbsp; {wod.formatWod} &nbsp; &nbsp;</div>
                 <div className="rounded-full bg-green-600 px-3 text-white">
                   {wod.date}
                 </div>
