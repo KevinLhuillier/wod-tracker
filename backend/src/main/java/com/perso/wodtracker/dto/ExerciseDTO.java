@@ -2,7 +2,8 @@ package com.perso.wodtracker.dto;
 
 public class ExerciseDTO {
     private int order;
-    private int reps;
+    private int amount;
+    private String unit;
     private String skill;
     private Float weight;
 
@@ -16,12 +17,20 @@ public class ExerciseDTO {
         this.order = order;
     }
 
-    public int getReps() {
-        return reps;
+    public int getAmount() {
+        return amount;
     }
 
-    public void setReps(int reps) {
-        this.reps = reps;
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public String getSkill() {

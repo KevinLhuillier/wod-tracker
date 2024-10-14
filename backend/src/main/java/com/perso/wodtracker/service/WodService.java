@@ -66,7 +66,8 @@ public class WodService {
                 }
                 composition.setStepOrder((short) exercise.getOrder());
                 composition.setSkill(skill);
-                composition.setReps((short) exercise.getReps());
+                composition.setAmount((short) exercise.getAmount());
+                composition.setUnit(exercise.getUnit());
                 composition.setWeight(exercise.getWeight() != null ? exercise.getWeight() : null);
 
                 // Associer Composition à Wod
@@ -122,7 +123,8 @@ public class WodService {
 
                 composition.setStepOrder((short) exercise.getOrder());
                 composition.setSkill(skill);
-                composition.setReps((short) exercise.getReps());
+                composition.setAmount((short) exercise.getAmount());
+                composition.setUnit(exercise.getUnit());
                 composition.setWeight(exercise.getWeight() != null ? exercise.getWeight() : null);
 
                 // Ajouter la composition mise à jour à la liste

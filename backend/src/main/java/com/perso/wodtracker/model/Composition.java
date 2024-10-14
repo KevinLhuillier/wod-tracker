@@ -38,8 +38,11 @@ public class Composition {
     @JoinColumn(name = "skill_id", nullable = false)
     private Skill skill;
 
-    @Column(name = "reps", nullable = false)
-    private Short reps;
+    @Column(name = "amount", nullable = false)
+    private Short amount;
+
+    @Column(name = "unit", nullable = false)
+    private String unit;
 
     @Column(name = "weight")
     private Float weight;
@@ -72,12 +75,20 @@ public class Composition {
         this.skill = skill;
     }
 
-    public Short getReps() {
-        return reps;
+    public Short getAmount() {
+        return amount;
     }
 
-    public void setReps(Short reps) {
-        this.reps = reps;
+    public void setAmount(Short amount) {
+        this.amount = amount;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public Float getWeight() {

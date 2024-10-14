@@ -72,37 +72,10 @@ const WodForm = () => {
     setBlocks(updatedBlocks);
   };
 
-  // const handleExerciseChange = (blockIndex, exerciseIndex, field, value) => {
-  //   const updatedBlocks = blocks.map((block, index) =>
-  //     index === blockIndex
-  //       ? {
-  //           ...block,
-  //           exercises: block.exercises.map((exercise, i) =>
-  //             i === exerciseIndex ? { ...exercise, [field]: value } : exercise
-  //           ),
-  //         }
-  //       : block
-  //   );
-  //   setBlocks(updatedBlocks);
-  // };
-
   const handleDeleteBlock = (blockIndex) => {
     const updatedBlocks = blocks.filter((_, i) => i !== blockIndex);
     setBlocks(updateOrder(updatedBlocks));
   };
-
-  // const handleAddExercise = () => {
-  //   setExercises(
-  //     updateOrder([
-  //       ...exercises,
-  //       {
-  //         reps: 1,
-  //         skill: EXERCISES[0].skill,
-  //         weight: 0,
-  //       },
-  //     ])
-  //   );
-  // };
 
   const handleAddExercise = (blockIndex) => {
     const updatedBlocks = blocks.map((block, index) =>
@@ -112,7 +85,8 @@ const WodForm = () => {
             exercises: updateOrder([
               ...block.exercises,
               {
-                reps: 1,
+                amount: 1,
+                unit: "Reps",
                 skill: EXERCISES[0].skill,
                 weight: 0,
               },
@@ -126,7 +100,8 @@ const WodForm = () => {
   const handleAddSpliceExercise = (index) => {
     const newExercises = [...exercises];
     const newExercise = {
-      reps: 1,
+      amount: 1,
+      unit: "Reps",
       skill: EXERCISES[0].skill,
       weight: 0,
     };
@@ -188,7 +163,8 @@ const WodForm = () => {
         rounds: block.rounds,
         exercises: block.exercises.map((ex) => ({
           order: ex.order,
-          reps: ex.reps,
+          amount: ex.amount,
+          unit: ex.unit,
           skill: ex.skill,
           weight: ex.weight,
         })),
@@ -350,22 +326,40 @@ const WodForm = () => {
                       >
                         <i className="fa-solid fa-trash-can"></i>
                       </button>
-                      <label>Step {exercise.order} - Reps: </label>
+
+                      <label>Step {exercise.order}: </label>
                       <input
                         type="number"
                         min="1"
-                        value={exercise.reps}
+                        value={exercise.amount}
                         onChange={(e) =>
                           handleExerciseChange(
                             blockIndex,
                             exerciseIndex,
-                            "reps",
+                            "amount",
                             e.target.value
                           )
                         }
                         className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-14"
                       />
-                      <label>Skill: </label>
+                      <select
+                        value={exercise.unit}
+                        onChange={(e) =>
+                          handleExerciseChange(
+                            blockIndex,
+                            exerciseIndex,
+                            "unit",
+                            e.target.value
+                          )
+                        }
+                        className="ml-2 mr-4 bg-gray-100 border border-gray-300 rounded py-2 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
+                      >
+                        <option value="Reps">Reps</option>
+                        <option value="Meters">Meters</option>
+                        <option value="Cal">Cal</option>
+                      </select>
+
+                      <label>of: </label>
                       <select
                         value={exercise.skill}
                         onChange={(e) =>

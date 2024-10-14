@@ -6,7 +6,6 @@ import com.perso.wodtracker.dto.WodResponseDTO;
 import com.perso.wodtracker.model.Composition;
 import com.perso.wodtracker.model.Wod;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +54,8 @@ public class WodMapper {
         ExerciseDTO dto = new ExerciseDTO();
         dto.setOrder(composition.getStepOrder());
         dto.setSkill(composition.getSkill().getName().trim());
-        dto.setReps(Integer.valueOf(composition.getReps()));
+        dto.setAmount(Integer.valueOf(composition.getAmount()));
+        dto.setUnit(composition.getUnit().trim());
         dto.setWeight(composition.getWeight() != null ? Float.valueOf(composition.getWeight()) : 0);
 
         return dto;
