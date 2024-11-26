@@ -110,6 +110,22 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="006-add-styles-column" author="kevin">
+        <addColumn tableName="composition">
+            <column name="styles" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="007-add-tools-column" author="kevin">
+        <addColumn tableName="composition">
+            <column name="tools" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 
 
 </databaseChangeLog>

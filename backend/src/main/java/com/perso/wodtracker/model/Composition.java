@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "composition")
 public class Composition {
@@ -43,6 +45,12 @@ public class Composition {
 
     @Column(name = "unit", nullable = false)
     private String unit;
+
+    @Column(name = "styles")
+    private String styles;
+
+    @Column(name = "tools")
+    private String tools;
 
     @Column(name = "weight")
     private Float weight;
@@ -130,6 +138,22 @@ public class Composition {
     public short getBlockRounds() {
         return blockRounds;
     }
-// Getters and Setters
+
+    public String getStyles() {
+        return styles;
+    }
+
+    public void setStyles(String styles) {
+        this.styles = styles;
+    }
+
+    public String getTools() {
+        return tools;
+    }
+
+    public void setTools(String tools) {
+        this.tools = tools;
+    }
+
 }
 

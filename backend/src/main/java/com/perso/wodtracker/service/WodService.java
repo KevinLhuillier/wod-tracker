@@ -68,6 +68,12 @@ public class WodService {
                 composition.setSkill(skill);
                 composition.setAmount((short) exercise.getAmount());
                 composition.setUnit(exercise.getUnit());
+                // Convertir la liste de styles en chaîne de caractères séparée par des points-virgules
+                String styles = (exercise.getStyles() != null) ? String.join(";", exercise.getStyles()) : null;
+                composition.setStyles(styles);
+                // Convertir la liste de tools en chaîne de caractères séparée par des points-virgules
+                String tools = (exercise.getTools() != null) ? String.join(";", exercise.getTools()) : null;
+                composition.setTools(tools);
                 composition.setWeight(exercise.getWeight() != null ? exercise.getWeight() : null);
 
                 // Associer Composition à Wod
@@ -125,6 +131,10 @@ public class WodService {
                 composition.setSkill(skill);
                 composition.setAmount((short) exercise.getAmount());
                 composition.setUnit(exercise.getUnit());
+                String styles = (exercise.getStyles() != null) ? String.join(";", exercise.getStyles()) : null;
+                composition.setStyles(styles);
+                String tools = (exercise.getTools() != null) ? String.join(";", exercise.getTools()) : null;
+                composition.setTools(tools);
                 composition.setWeight(exercise.getWeight() != null ? exercise.getWeight() : null);
 
                 // Ajouter la composition mise à jour à la liste

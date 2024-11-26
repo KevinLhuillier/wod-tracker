@@ -72,3 +72,21 @@ export const EXERCISES = [
   { type: "Cardio", skill: "Box Step-up", requiresWeight: true },
   { type: "Cardio", skill: "Burpee Box Jump-over", requiresWeight: false },
 ];
+
+export const EXERCISE_STYLES = {
+  Weightlifting: ["Hang", "Muscle", "Squat"],
+  Bodyweight: ["Kipping", "Butterfly", "Strict"],
+  Cardio: [], // Si la catégorie cardio n'a pas de styles spécifiques, laisser vide
+};
+
+export const TOOLS = {
+  Weightlifting: [
+    "Barbell",
+    "Dumbbell",
+    "Double Dumbbells",
+    "Kettlebell",
+    "Double Kettlebells",
+  ],
+  Bodyweight: [],
+  Cardio: [],
+};

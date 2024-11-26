@@ -1,9 +1,15 @@
 import React, { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Menu from "./Menu";
-import { WOD_TYPES, WOD_FORMATS, EXERCISES } from "./constants";
+import {
+  WOD_TYPES,
+  WOD_FORMATS,
+  EXERCISES,
+  EXERCISE_STYLES,
+  TOOLS,
+} from "./constants";
 import { addWod, updateWod } from "../redux/wodSlice";
 
 const WodForm = () => {
@@ -16,6 +22,10 @@ const WodForm = () => {
   const dispatch = useDispatch();
   const navigateTo = useNavigate();
   const wods = useSelector((state) => state.wods.wods);
+  const [showStylesDropdown, setShowStylesDropdown] = useState(null);
+  const dropdownRef = useRef(null);
+  const [showToolsDropdown, setShowToolsDropdown] = useState(null);
+  const toolsDropdownRef = useRef(null);
 
   useEffect(() => {
     if (id) {
@@ -30,6 +40,11 @@ const WodForm = () => {
           const sortedExercises = [...block.exercises].sort(
             (a, b) => a.order - b.order
           );
+          // Initialiser styles si non défini
+          // const exercisesWithStyles = sortedExercises.map((exercise) => ({
+          //   ...exercise,
+          //   styles: exercise.styles || [],
+          // }));
 
           // Retourner un nouveau bloc avec les exercices triés
           return {
@@ -44,6 +59,51 @@ const WodForm = () => {
       }
     }
   }, [id, wods]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowStylesDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const toggleStyleDropdown = (blockIndex, exerciseIndex) => {
+    setShowStylesDropdown(
+      showStylesDropdown === `${blockIndex}-${exerciseIndex}`
+        ? null
+        : `${blockIndex}-${exerciseIndex}`
+    );
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        toolsDropdownRef.current &&
+        !toolsDropdownRef.current.contains(event.target)
+      ) {
+        setShowToolsDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const toggleToolsDropdown = (blockIndex, exerciseIndex) => {
+    setShowToolsDropdown(
+      showToolsDropdown === `${blockIndex}-${exerciseIndex}`
+        ? null
+        : `${blockIndex}-${exerciseIndex}`
+    );
+  };
 
   const handleAddBlock = () => {
     setBlocks(
@@ -88,6 +148,8 @@ const WodForm = () => {
                 amount: 1,
                 unit: "Reps",
                 skill: EXERCISES[0].skill,
+                styles: [],
+                tools: [],
                 weight: 0,
               },
             ]),
@@ -129,7 +191,14 @@ const WodForm = () => {
         ? {
             ...block,
             exercises: block.exercises.map((exercise, i) =>
-              i === exerciseIndex ? { ...exercise, [field]: value } : exercise
+              i === exerciseIndex
+                ? {
+                    ...exercise,
+                    [field]: value,
+                    ...(field === "skill" && { styles: [] }), // Réinitialiser les styles si le champ modifié est 'skill'
+                    ...(field === "skill" && { tools: [] }), // Réinitialiser les styles si le champ modifié est 'skill'
+                  }
+                : exercise
             ),
           }
         : block
@@ -146,6 +215,52 @@ const WodForm = () => {
 
   const handleDateChange = (event) => {
     setWorkoutDate(event.target.value);
+  };
+
+  const handleStyleChange = (blockIndex, exerciseIndex, style) => {
+    const updatedBlocks = blocks.map((block, index) =>
+      index === blockIndex
+        ? {
+            ...block,
+            exercises: block.exercises.map((exercise, i) =>
+              i === exerciseIndex
+                ? {
+                    ...exercise,
+                    styles: exercise.styles
+                      ? exercise.styles.includes(style)
+                        ? exercise.styles.filter((s) => s !== style) // Supprime si déjà sélectionné
+                        : [...exercise.styles, style] // Ajoute sinon
+                      : [style],
+                  }
+                : exercise
+            ),
+          }
+        : block
+    );
+    setBlocks(updatedBlocks);
+  };
+
+  const handleToolChange = (blockIndex, exerciseIndex, tool) => {
+    const updatedBlocks = blocks.map((block, index) =>
+      index === blockIndex
+        ? {
+            ...block,
+            exercises: block.exercises.map((exercise, i) =>
+              i === exerciseIndex
+                ? {
+                    ...exercise,
+                    tools: exercise.tools
+                      ? exercise.tools.includes(tool)
+                        ? exercise.tools.filter((s) => s !== tool) // Supprime si déjà sélectionné
+                        : [...exercise.tools, tool] // Ajoute sinon
+                      : [tool],
+                  }
+                : exercise
+            ),
+          }
+        : block
+    );
+    setBlocks(updatedBlocks);
   };
 
   const handleSubmit = (e) => {
@@ -166,6 +281,8 @@ const WodForm = () => {
           amount: ex.amount,
           unit: ex.unit,
           skill: ex.skill,
+          styles: ex.styles,
+          tools: ex.tools,
           weight: ex.weight,
         })),
       })),
@@ -316,7 +433,7 @@ const WodForm = () => {
               <div className="pl-4 border-l-4">
                 <ul>
                   {block.exercises.map((exercise, exerciseIndex) => (
-                    <li key={exerciseIndex} className="mb-4">
+                    <li key={exerciseIndex} className="flex items-center mb-4">
                       <button
                         type="button"
                         onClick={() =>
@@ -326,7 +443,6 @@ const WodForm = () => {
                       >
                         <i className="fa-solid fa-trash-can"></i>
                       </button>
-
                       <label>Step {exercise.order}: </label>
                       <input
                         type="number"
@@ -358,7 +474,6 @@ const WodForm = () => {
                         <option value="Meters">Meters</option>
                         <option value="Cal">Cal</option>
                       </select>
-
                       <label>of: </label>
                       <select
                         value={exercise.skill}
@@ -400,6 +515,125 @@ const WodForm = () => {
                             ))}
                         </optgroup>
                       </select>
+                      {/* Liste à choix multiple pour les styles */}
+                      {EXERCISE_STYLES[
+                        EXERCISES.find((ex) => ex.skill === exercise.skill)
+                          ?.type
+                      ]?.length > 0 && (
+                        <>
+                          <div className="relative inline-block">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                toggleStyleDropdown(blockIndex, exerciseIndex)
+                              }
+                              className="ml-2 mr-4 py-2 px-4 bg-gray-100 border border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-60"
+                            >
+                              {exercise.styles != null &&
+                              exercise.styles.length > 0
+                                ? exercise.styles.join(", ")
+                                : "Select styles"}
+                            </button>
+
+                            {showStylesDropdown ===
+                              `${blockIndex}-${exerciseIndex}` && (
+                              <div
+                                ref={dropdownRef}
+                                className="absolute z-10 mt-2 bg-white border border-gray-300 rounded shadow-lg p-4 w-56"
+                              >
+                                {EXERCISE_STYLES[
+                                  EXERCISES.find(
+                                    (ex) => ex.skill === exercise.skill
+                                  )?.type
+                                ].map((style) => (
+                                  <label
+                                    key={style}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={
+                                        exercise.styles
+                                          ? exercise.styles.includes(style)
+                                          : false
+                                      }
+                                      onChange={() =>
+                                        handleStyleChange(
+                                          blockIndex,
+                                          exerciseIndex,
+                                          style
+                                        )
+                                      }
+                                      className="bg-gray-100 border border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
+                                    />
+                                    {style}
+                                  </label>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                      {/* Liste à choix multiple pour les styles */}
+                      {TOOLS[
+                        EXERCISES.find((ex) => ex.skill === exercise.skill)
+                          ?.type
+                      ]?.length > 0 && (
+                        <>
+                          <div className="relative inline-block">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                toggleToolsDropdown(blockIndex, exerciseIndex)
+                              }
+                              className="ml-2 mr-4 py-2 px-4 bg-gray-100 border border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-black w-60"
+                            >
+                              {exercise.tools != null &&
+                              exercise.tools.length > 0
+                                ? exercise.tools.join(", ")
+                                : "Select Tool"}
+                            </button>
+
+                            {showToolsDropdown ===
+                              `${blockIndex}-${exerciseIndex}` && (
+                              <div
+                                ref={toolsDropdownRef}
+                                className="absolute z-10 mt-2 bg-white border border-gray-300 rounded shadow-lg p-4 w-56"
+                              >
+                                {TOOLS[
+                                  EXERCISES.find(
+                                    (ex) => ex.skill === exercise.skill
+                                  )?.type
+                                ].map((tool) => (
+                                  <label
+                                    key={tool}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={
+                                        exercise.tools
+                                          ? exercise.tools.includes(tool)
+                                          : false
+                                      }
+                                      onChange={() =>
+                                        handleToolChange(
+                                          blockIndex,
+                                          exerciseIndex,
+                                          tool
+                                        )
+                                      }
+                                      className="bg-gray-100 border border-gray-300 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-black"
+                                    />
+                                    {tool}
+                                  </label>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+
                       {EXERCISES.find((ex) => ex.skill === exercise.skill)
                         ?.requiresWeight && (
                         <>
