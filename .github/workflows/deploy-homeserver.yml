@@ -1,0 +1,28 @@
+name: Deploy Home Server
+
+env:
+  SERVER_PRODUCTION_USER: "root"
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: http://${{ secrets.HOMESERVER_IP }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Déployer sur le serveur de production
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add - <<< "${{ secrets.HOMESERVER_KEY }}"
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.HOMESERVER_IP}} >> ~/.ssh/known_hosts
+          scp docker-compose.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ secrets.HOMESERVER_IP}}:/root/docker-compose.yml
+          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ secrets.HOMESERVER_IP}} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}"
+          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ secrets.HOMESERVER_IP}} "docker compose -f /root/docker-compose.yml up -d --force-recreate"
