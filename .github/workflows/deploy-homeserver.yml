@@ -1,6 +1,7 @@
 name: Deploy Home Server
 
 env:
+  SERVER_PRODUCTION_IP: "86.192.222.128"
   SERVER_PRODUCTION_USER: "root"
 
 on:
@@ -13,7 +14,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     environment:
       name: production
-      url: http://${{ secrets.HOMESERVER_IP }}
+      url: http://$SERVER_PRODUCTION_IP
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,7 +23,7 @@ jobs:
           eval $(ssh-agent -s)
           ssh-add - <<< "${{ secrets.HOMESERVER_KEY }}"
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.HOMESERVER_IP}} >> ~/.ssh/known_hosts
-          scp docker-compose.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ secrets.HOMESERVER_IP}}:/root/docker-compose.yml
-          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ secrets.HOMESERVER_IP}} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}"
-          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ secrets.HOMESERVER_IP}} "docker compose -f /root/docker-compose.yml up -d --force-recreate"
+          ssh-keyscan -H ${{ env.SERVER_PRODUCTION_IP}} >> ~/.ssh/known_hosts
+          scp docker-compose.yml ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}}:/root/docker-compose.yml
+          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}"
+          ssh ${{ env.SERVER_PRODUCTION_USER }}@${{ env.SERVER_PRODUCTION_IP}} "docker compose -f /root/docker-compose.yml up -d --force-recreate"
