@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = {"http://localhost:5173", "http://kevinlhuillier.fr"})  // Permet les appels depuis le front React
+@CrossOrigin(origins = {"http://localhost:5173", "https://kevinlhuillier.fr"})  // Permet les appels depuis le front React
 public class AuthController {
 
     @Autowired
