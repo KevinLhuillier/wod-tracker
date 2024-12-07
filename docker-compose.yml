@@ -2,7 +2,7 @@ services:
   frontend:
     image: ghcr.io/kevinlhuillier/wod-tracker-front:main
     ports:
-      - "3000:3000"
+      - "3000:80"
     environment:
       - VITE_API_URL=http://kevinlhuillier.fr/api
 
